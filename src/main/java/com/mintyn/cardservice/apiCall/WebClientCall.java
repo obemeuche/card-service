@@ -17,6 +17,7 @@ import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClient;
 
 import java.time.Duration;
+import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 @Component
@@ -27,7 +28,7 @@ public class WebClientCall {
     @Value("${application.http.callout.api.bin.list.endpoint.url}")
     private String BIN_LIST_ENDPOINT;
 
-    public String cardServiceApiCall(String request) {
+    public HashMap<String, Object> cardServiceApiCall(String request) {
 
         HttpClient httpClient = HttpClient.create()
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 30000)
@@ -43,21 +44,19 @@ public class WebClientCall {
         WebClient.RequestHeadersSpec<?> headersSpec = bodySpec.bodyValue(request);
         headersSpec.header(HttpHeaders.CONTENT_TYPE, String.valueOf(MediaType.TEXT_XML));
 
-        Mono<String> nibssTransferResponse = headersSpec.exchangeToMono(response -> {
+        Mono<Object> binResponse = headersSpec.exchangeToMono(response -> {
             if (response.statusCode().equals(HttpStatus.OK)) {
-                log.info("200 ok response");
-                return response.bodyToMono(String.class);
+                return response.bodyToMono(Object.class);
             } else if (response.statusCode().is4xxClientError()) {
-                log.info("400 error response");
-                return Mono.just("400xx");
-            } else if (response.statusCode().is5xxServerError()) {
-                log.info("500 error response");
-                return Mono.just("500xx");
+                return response.createException()
+                        .flatMap(Mono::error).cast(Object.class);
             } else {
-                log.info("other error types");
-                return Mono.just("900xx");
+                return response.createException()
+                        .flatMap(Mono::error).cast(Object.class);
             }
         });
-        return nibssTransferResponse.block();
+        Object binListResponse = binResponse.block();
+
+        return (HashMap<String, Object>) binListResponse;
     }
 }
