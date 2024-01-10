@@ -8,13 +8,13 @@ import com.mintyn.cardservice.exceptions.DatabaseException;
 import com.mintyn.cardservice.repository.CardInfoRepository;
 import com.mintyn.cardservice.response.BinListResponse;
 import com.mintyn.cardservice.response.CardInfoResponse;
+import com.mintyn.cardservice.response.dto.Payload;
 import com.mintyn.cardservice.service.CardInfoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +32,7 @@ public class CardInfoServiceImpl implements CardInfoService {
     public CardInfoResponse verifyCard(String cardNumber)
     {
         //check if cardNumber exists in DB
-        Optional<CardInfo> cardDetails;
+        CardInfo cardDetails;
         try
         {
             cardDetails = cardInfoRepository.findByCardNumber(cardNumber);
@@ -42,12 +42,15 @@ public class CardInfoServiceImpl implements CardInfoService {
         }
         CardInfoResponse cardInfoResponse = new CardInfoResponse();
 
-        if (cardDetails.isPresent())
+        if (cardDetails != null)
         {
+            Payload payload = new Payload();
+            payload.setBank(cardDetails.getBank());
+            payload.setType(cardDetails.getType());
+            payload.setScheme(cardDetails.getScheme());
+
             cardInfoResponse.setSuccess(true);
-            cardInfoResponse.getPayload().setScheme(cardDetails.get().getScheme());
-            cardInfoResponse.getPayload().setType(cardDetails.get().getType());
-            cardInfoResponse.getPayload().setBank(cardDetails.get().getBank());
+            cardInfoResponse.setPayload(payload);
 
         } else
         {
