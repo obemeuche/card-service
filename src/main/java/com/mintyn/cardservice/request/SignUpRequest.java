@@ -15,10 +15,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class SignUpRequest {
 
-//    @NotEmpty(message = "Invalid username")
-//    @Pattern(regexp = "^[a-zA-Z0-9]+$", message = "Invalid username")
-//    private String username;
-
     @Email(message = "Invalid email address")
     private String email;
 
