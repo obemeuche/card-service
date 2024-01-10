@@ -3,6 +3,7 @@ package com.mintyn.cardservice.service.serviceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mintyn.cardservice.apiCall.WebClientCall;
 import com.mintyn.cardservice.entity.CardInfo;
+import com.mintyn.cardservice.exceptions.DatabaseException;
 import com.mintyn.cardservice.repository.CardInfoRepository;
 import com.mintyn.cardservice.response.BinListResponse;
 import com.mintyn.cardservice.response.CardInfoResponse;
@@ -30,7 +31,15 @@ public class CardInfoServiceImpl implements CardInfoService {
     public CardInfoResponse verifyCard(String cardNumber)
     {
         //check if cardNumber exists in DB
-        Optional<CardInfo> cardDetails = cardInfoRepository.findByCardNumber(cardNumber);
+        Optional<CardInfo> cardDetails;
+        try
+        {
+            cardDetails = cardInfoRepository.findByCardNumber(cardNumber);
+        }catch (Exception e)
+        {
+            throw new DatabaseException("UNABLE TO CONNECT TO THE CARD INFO DATABASE!");
+        }
+
 
         CardInfo cardInfo = new CardInfo();
 
