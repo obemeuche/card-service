@@ -43,8 +43,8 @@ class CardInfoServiceImplTest {
     }
 
     @Test
-    void verifyCard_WithExistingCardNumber_ShouldReturnValidCardInfoResponse() {
-        // Arrange
+    void verifyCard_WithExistingCardNumber_ShouldReturnValidCardInfoResponse()
+    {
         String cardNumber = "12345678";
         CardInfo cardInfo = new CardInfo();
         cardInfo.setCardNumber(cardNumber);
@@ -54,10 +54,8 @@ class CardInfoServiceImplTest {
 
         when(cardInfoRepository.findByCardNumber(cardNumber)).thenReturn(cardInfo);
 
-        // Act
         CardInfoResponse result = cardInfoService.verifyCard(cardNumber);
 
-        // Assert
         assertTrue(result.isSuccess());
         assertEquals("visa", result.getPayload().getScheme());
         assertEquals("debit", result.getPayload().getType());
