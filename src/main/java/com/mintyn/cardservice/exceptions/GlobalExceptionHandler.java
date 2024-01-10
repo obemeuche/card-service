@@ -44,4 +44,12 @@ public class GlobalExceptionHandler{
         return ResponseEntity.badRequest().body(response);
     }
 
+    @ExceptionHandler(value = {ConnectionException.class})
+    public ResponseEntity<ErrorResponse> handleConnectionException(ConnectionException e) {
+        ErrorResponse response = new ErrorResponse();
+        response.setResponseMsg(e.getMessage());
+        response.setResponseCode("99");
+        return ResponseEntity.internalServerError().body(response);
+    }
+
 }

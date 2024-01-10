@@ -3,6 +3,7 @@ package com.mintyn.cardservice.service.serviceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mintyn.cardservice.apiCall.WebClientCall;
 import com.mintyn.cardservice.entity.CardInfo;
+import com.mintyn.cardservice.exceptions.ConnectionException;
 import com.mintyn.cardservice.exceptions.DatabaseException;
 import com.mintyn.cardservice.repository.CardInfoRepository;
 import com.mintyn.cardservice.response.BinListResponse;
@@ -37,34 +38,40 @@ public class CardInfoServiceImpl implements CardInfoService {
             cardDetails = cardInfoRepository.findByCardNumber(cardNumber);
         }catch (Exception e)
         {
-            throw new DatabaseException("UNABLE TO CONNECT TO THE CARD INFO DATABASE!");
+            throw new DatabaseException("DATABASE UNAVAILABLE!");
         }
-
-
-        CardInfo cardInfo = new CardInfo();
-
         CardInfoResponse cardInfoResponse = new CardInfoResponse();
 
         if (cardDetails.isPresent())
         {
             cardInfoResponse.setSuccess(true);
-            cardInfoResponse.getPayload().setScheme(cardInfo.getScheme());
-            cardInfoResponse.getPayload().setType(cardInfo.getType());
-            cardInfoResponse.getPayload().setBank(cardInfo.getBank());
+            cardInfoResponse.getPayload().setScheme(cardDetails.get().getScheme());
+            cardInfoResponse.getPayload().setType(cardDetails.get().getType());
+            cardInfoResponse.getPayload().setBank(cardDetails.get().getBank());
 
         } else
         {
-            Map<String, Object> response = webClientCall.cardServiceApiCall(cardNumber);
+            Map<String, Object> response;
+            try
+            {
+                response = webClientCall.cardServiceApiCall(cardNumber);
+            }catch (Exception e)
+            {
+                throw new ConnectionException("SERVICE UNAVAILABLE!");
+            }
             log.info("Api Call Response: " + response);
 
+            //maps response to binList response body
             BinListResponse binListResponse = objectMapper.convertValue(response, BinListResponse.class);
 
-            if (binListResponse != null) {
+            if (binListResponse != null)
+            {
                 cardInfoResponse.setSuccess(true);
                 cardInfoResponse.getPayload().setScheme(binListResponse.getScheme());
                 cardInfoResponse.getPayload().setType(binListResponse.getType());
                 cardInfoResponse.getPayload().setBank(binListResponse.getBank().getName());
 
+                CardInfo cardInfo = new CardInfo();
                 cardInfo.setCardNumber(cardNumber);
                 cardInfo.setBank(binListResponse.getBank().getName());
                 cardInfo.setScheme(binListResponse.getScheme());
