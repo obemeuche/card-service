@@ -23,12 +23,12 @@ public class UserController {
 
     private final LogInService logInService;
 
-    @PostMapping("/api/v1/signup")
+    @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody @Valid SignUpRequest signUpRequest) {
         return signUpService.signUp(signUpRequest);
     }
 
-    @PostMapping("/api/v1/signin")
+    @PostMapping("/signin")
     public ResponseEntity<?> signin(@RequestBody LogInRequest logInRequest) {
         return logInService.signIn(logInRequest);
     }

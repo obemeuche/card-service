@@ -42,7 +42,6 @@ public class WebClientCall {
         WebClient.UriSpec<WebClient.RequestBodySpec> uriSpec = client.method(HttpMethod.POST);
         WebClient.RequestBodySpec bodySpec = uriSpec.uri(BIN_LIST_ENDPOINT + request);
         WebClient.RequestHeadersSpec<?> headersSpec = bodySpec.bodyValue(request);
-        headersSpec.header(HttpHeaders.CONTENT_TYPE, String.valueOf(MediaType.TEXT_XML));
 
         Mono<Object> binResponse = headersSpec.exchangeToMono(response -> {
             if (response.statusCode().equals(HttpStatus.OK)) {

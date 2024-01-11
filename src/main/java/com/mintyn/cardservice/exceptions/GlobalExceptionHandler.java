@@ -51,5 +51,4 @@ public class GlobalExceptionHandler{
         response.setResponseCode("99");
         return ResponseEntity.internalServerError().body(response);
     }
-
 }
