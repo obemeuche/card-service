@@ -10,7 +10,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler{
 
     @ExceptionHandler(EmailAlreadyExists.class)
-    public ResponseEntity<ErrorResponse> handlerForEmailAlreadyExists(final EmailAlreadyExists ex) {
+    public ResponseEntity<ErrorResponse> handlerForEmailAlreadyExists(final EmailAlreadyExists ex)
+    {
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setResponseMsg(ex.getMessage());
         //customized response code
@@ -19,7 +20,8 @@ public class GlobalExceptionHandler{
     }
 
     @ExceptionHandler(DatabaseException.class)
-    public ResponseEntity<ErrorResponse> handlerForDatabaseException(final DatabaseException ex) {
+    public ResponseEntity<ErrorResponse> handlerForDatabaseException(final DatabaseException ex)
+    {
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setResponseMsg(ex.getMessage());
         //customized response code
@@ -28,7 +30,8 @@ public class GlobalExceptionHandler{
     }
 
     @ExceptionHandler(PasswordNotMatchingException.class)
-    public ResponseEntity<ErrorResponse> handlerForPasswordNotMatchingException(final PasswordNotMatchingException ex) {
+    public ResponseEntity<ErrorResponse> handlerForPasswordNotMatchingException(final PasswordNotMatchingException ex)
+    {
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setResponseMsg(ex.getMessage());
         //customized response code
@@ -37,7 +40,8 @@ public class GlobalExceptionHandler{
     }
 
     @ExceptionHandler(value = {MethodArgumentNotValidException.class})
-    public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+    public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException e)
+    {
         ErrorResponse response = new ErrorResponse();
         response.setResponseCode("99");
         response.setResponseMsg(e.getAllErrors().get(0).getDefaultMessage());
@@ -45,7 +49,8 @@ public class GlobalExceptionHandler{
     }
 
     @ExceptionHandler(value = {ConnectionException.class})
-    public ResponseEntity<ErrorResponse> handleConnectionException(ConnectionException e) {
+    public ResponseEntity<ErrorResponse> handleConnectionException(ConnectionException e)
+    {
         ErrorResponse response = new ErrorResponse();
         response.setResponseMsg(e.getMessage());
         response.setResponseCode("99");
