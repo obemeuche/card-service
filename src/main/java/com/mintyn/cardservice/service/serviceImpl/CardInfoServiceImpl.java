@@ -44,10 +44,18 @@ public class CardInfoServiceImpl implements CardInfoService {
 
         if (cardDetails != null)
         {
-            Payload payload = new Payload();
-            payload.setBank(cardDetails.getBank());
-            payload.setType(cardDetails.getType());
-            payload.setScheme(cardDetails.getScheme());
+            //using Builder Design Pattern
+            Payload payload = Payload
+                    .builder()
+                    .bank(cardDetails.getBank())
+                    .type(cardDetails.getType())
+                    .scheme(cardDetails.getScheme())
+                    .build();
+
+//            Payload payload = new Payload();
+//            payload.setBank(cardDetails.getBank());
+//            payload.setType(cardDetails.getType());
+//            payload.setScheme(cardDetails.getScheme());
 
             cardInfoResponse.setSuccess(true);
             cardInfoResponse.setPayload(payload);
